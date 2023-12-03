@@ -1,7 +1,11 @@
 .App {
   text-align: center;
+  height: 100vh;
+  background-color: rgb(109, 134, 103);
 }
+.contenitore{
 
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -32,7 +36,119 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
+}
+
+h1 {
+  font-family: Velodroma Basic;
+
+}
+
+
+
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #111;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.waviy {
+  position: relative;
+}
+
+.waviy span {
+  position: relative;
+  display: inline-block;
+  font-size: 40px;
+  color: #fff;
+  text-transform: uppercase;
+  animation: flip 2s infinite;
+  animation-delay: calc(.2s * var(--i))
+}
+
+@keyframes flip {
+
+  0%,
+  80% {
+    transform: rotateY(360deg)
+  }
+}
+
+
+
+.glass-modal {
+  background: rgba(255, 255, 255, 0.9); /* Adjust the alpha value for transparency */
+  border: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow for depth */
+}
+
+.glass-modal .modal-content {
+  background: transparent;
+}
+
+.glass-modal .modal-header,
+.glass-modal .modal-footer {
+  background: rgba(255, 255, 255, 0.7); /* Adjust the alpha value for transparency */
+}
+
+.glass-modal .modal-body {
+  background: rgba(255, 255, 255, 0.5); /* Adjust the alpha value for transparency */
+}
+
+
+
+/* Popup style */
+.popup-box {
+  border-radius: 10px;
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  backdrop-filter: blur(5px);
+}
+.inputBox {
+  border-radius: 10px;
+}
+
+.box {
+  position: relative;
+  width: 70%;
+  margin: 0 auto;
+  height: auto;
+  max-height: 70vh;
+  margin-top: calc(100vh - 85vh - 20px);
+  background: white;
+  opacity: 1;
+  border-radius: 10px;
+  padding: 20px;
+  border: 1px solid #999;
+  overflow: auto;
+}
+
+.close-icon {
+  cursor: pointer;
+  position: fixed;
+  right: calc(15% - 30px);
+  top: calc(100vh - 85vh - 33px);
+  background: #ff0000;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  line-height: 20px;
+  text-align: center;
+  border: 1px solid #999;
+  font-size: 20px;
 }
