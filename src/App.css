@@ -152,3 +152,20 @@ body {
   border: 1px solid #999;
   font-size: 20px;
 }
+
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input:focus {
+  outline: none;
+  background-color: rgb(255, 162, 0);
+}
+
+button:focus {
+  outline: none;
+  background-color: rgb(255, 162, 0);
+}

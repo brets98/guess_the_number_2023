@@ -2,10 +2,18 @@ import { useEffect, useState } from 'react';
 import { Button, Col, Modal, Row } from 'react-bootstrap';
 import TextTransition, { presets } from 'react-text-transition';
 // import './App.css';
+import { useWindowSize } from "@uidotdev/usehooks";
+import React from 'react';
+import Confetti from 'react-confetti';
 import { AiOutlineInfoCircle } from "react-icons/ai";
-
+import { FaCircle, FaRegCircle } from "react-icons/fa";
 import Infopopup from '../Components/Infopopup';
+
 function FirstPage() {
+
+    const { width, height } = useWindowSize()
+    const [YouWon, setYouWon] = useState(false)
+
 
     const [isShow, setisShow] = useState(true)
     const [Intro, setIntro] = useState(true);
@@ -15,10 +23,11 @@ function FirstPage() {
     const [guessedRes, setguessedRes] = useState([]);
 
 
+    const [guesses, setGuesses] = useState(Array(4).fill(''));
+    const inputRefs = Array(5).fill(0).map((_, i) => React.createRef());
 
 
-
-    const [guess, setGuess] = useState(''); // Initialize guess state with an empty string
+    const [guess, setGuess] = useState(''); // Initialize guess te with an empty string
 
     const [toGuess, settoGuess] = useState(0)
 
@@ -49,18 +58,21 @@ function FirstPage() {
 
     const isCorrect = () => {
 
+
+        setguessed([guesses, ...guessed])
+
         var alreadychecked = [];
         var correctPosition = 0;
         var correctNumber = 0;
         for (var i = 0; i < 4; i++) {
-            var indici = getAllIndices(toGuess, guess[i])
-            if (toGuess[i] == guess[i]) {
+
+            if (toGuess[i] == guesses[i]) {
                 correctPosition++;
-                alreadychecked.push(guess[i]);
+                alreadychecked.push(guesses[i]);
             }
-            else if (toGuess.includes(guess[i]) && !alreadychecked.includes(guess[i])) {
+            else if (toGuess.includes(guesses[i]) && !alreadychecked.includes(guesses[i])) {
                 correctNumber++;
-                alreadychecked.push(guess[i]);
+                alreadychecked.push(guesses[i]);
 
             }
 
@@ -68,10 +80,16 @@ function FirstPage() {
 
         if (correctPosition == 4) {
             setguessedRes(['you wonn', ...guessedRes]);
+            setYouWon(true)
 
         } else
             setguessedRes([correctPosition + ' - ' + correctNumber, ...guessedRes]);
 
+
+
+        inputRefs[0].current.focus();
+
+        setGuesses(Array(4).fill(''));
 
 
     }
@@ -95,6 +113,18 @@ function FirstPage() {
 
     const [hoverGuess, sethoverGuess] = useState(false)
 
+    useEffect(() => {
+
+        const allFilled = guesses.every(guess => guess !== '');
+        if (allFilled) {
+            setguessed([guess, ...guessed]);
+            isCorrect();
+            setGuess('');
+        }
+
+    }, [guesses])
+
+
     return (
         <div className="App">
             {showPopup && <Infopopup handleClose={HidePopUp}></Infopopup>}
@@ -104,52 +134,65 @@ function FirstPage() {
                     <h1>GUESS THE NUMBER</h1>
 
                 </div>
+                {
+                    YouWon &&
 
+                    <Confetti
 
+                        width={width}
+                        height={height}
+                    />
+                }
                 <AiOutlineInfoCircle onClick={() => setshowPopup(true)} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '30px' }}></AiOutlineInfoCircle>
 
                 <div style={{ marginTop: '50px' }} className={`faded-element ${game ? 'visible' : ''} `}>
-                    <input
-                        style={{
-                            width: '600px',
-                            height: '50px',
-                            borderRadius: '10px',
-                            border: 'transparent',
-                            fontSize: '30px',
-                        }}
-                        name="guess"
-                        type="number"
-                        value={guess}
-                        onChange={(e) => {
-                            const inputGuess = e.target.value.replace(/\D/g, ''); // Remove non-digit characters
-                            if (inputGuess.length <= 4) {
-                                setGuess(inputGuess);
-                            }
-                        }}
-                    />
+                    {Array(4).fill(null).map((_, index) => (
+                        <input
+                            key={index}
+                            ref={inputRefs[index]}
 
-                    <Button
-                        style={{
-                            marginLeft: '50px',
-                            // backgroundColor:hoverGuess ? 'white' : 'trasparent', 
-                            background: 'white',
-                            opacity: hoverGuess ? 1 : 0.8,
-                            color: hoverGuess ? 'black' : 'black',
-                            border: '1px solid transparent'
-                        }}
-                        onClick={() => {
-                            setguessed([guess, ...guessed]);
-                            isCorrect();
-                            setGuess('');
+                            style={{
+                                width: '50px',
+                                height: '50px',
+                                borderRadius: '10px',
+                                border: 'transparent',
+                                fontSize: '30px',
+                                margin: '0 10px',
+                                textAlign: 'center',
+                                appearance: 'textfield',
+                                caretColor: 'transparent' // This will remove the text cursor
+                            }}
+                            className="focused-input"
 
-                        }}
-                        onMouseEnter={() => { sethoverGuess(true) }}
-                        onMouseLeave={() => { sethoverGuess(false) }}
-                    >Guess</Button>
+                            name={`guess${index}`}
+                            type="number"
+                            value={guesses[index]}
+                            onChange={(e) => {
+                                const inputGuess = e.target.value.replace(/\D/g, ''); // Remove non-digit characters
+                                if (inputGuess.length <= 1) {
+                                    const newGuesses = [...guesses];
+                                    newGuesses[index] = inputGuess;
+                                    console.log("🚀 ~ file: FirstPage.jsx:224 ~ FirstPage ~ newGuesses:", newGuesses)
+
+                                    setGuesses(newGuesses);
+
+
+                                    if (inputGuess.length === 1 && index < 3) {
+                                        inputRefs[index + 1].current.focus();
+                                    }
+
+
+                                }
+                            }}
+                        />
+                    ))}
+
 
                     <div>
                         <Row>
-                            <Col>
+                            <Col md={2}></Col>
+
+                            <Col >
                                 {
                                     guessed.map((el, index) => (
                                         <div key={index}>{el}</div>
@@ -161,12 +204,25 @@ function FirstPage() {
                                     guessedRes.map((el, index) => {
                                         return (
                                             <div key={index}>
-                                                {el}
+                                                {Array(parseInt(el.split('-')[0])).fill(null).map((_, i) => (
+                                                    <span key={i}>
+                                                        <FaRegCircle />
+                                                    </span>
+                                                ))}
+
+
+                                                {Array(parseInt(el.split('-')[1])).fill(null).map((_, i) => (
+                                                    <span key={i}>
+                                                        <FaCircle />
+
+                                                    </span>
+                                                ))}
                                             </div>
                                         )
                                     })
                                 }
                             </Col>
+                            <Col md={2}></Col>
                         </Row>
 
                     </div>
@@ -194,12 +250,17 @@ function FirstPage() {
                             setIntro(false)
                             setgame(true)
                             createNumberToGuess()
+                            inputRefs[0].current.focus();
+
 
                         } else {
                             setIntro(true)
                             setgame(false)
                             setguessed([])
                             setguessedRes([])
+                            inputRefs[0].current.focus();
+                            setYouWon(false)
+
 
                         }
                     }}>
